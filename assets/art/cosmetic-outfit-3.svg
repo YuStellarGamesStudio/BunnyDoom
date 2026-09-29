@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180"><defs>
+<radialGradient id="fur" cx="35%" cy="25%" r="75%"><stop stop-color="#fffef1"/><stop offset=".48" stop-color="#ffe6b5"/><stop offset=".86" stop-color="#d99563"/><stop offset="1" stop-color="#965565"/></radialGradient>
+<radialGradient id="white" cx="32%" cy="22%" r="85%"><stop stop-color="#fffdf4"/><stop offset=".65" stop-color="#f3e5d5"/><stop offset="1" stop-color="#cfa9a0"/></radialGradient>
+<radialGradient id="gold" cx="30%" cy="22%"><stop stop-color="#fffccc"/><stop offset=".45" stop-color="#ffe269"/><stop offset="1" stop-color="#d98933"/></radialGradient>
+<radialGradient id="silver" cx="28%" cy="18%"><stop stop-color="#fff"/><stop offset=".53" stop-color="#c5e8f0"/><stop offset="1" stop-color="#7293ba"/></radialGradient>
+<radialGradient id="shadow" cx="40%" cy="20%"><stop stop-color="#895576"/><stop offset="1" stop-color="#271d40"/></radialGradient>
+<linearGradient id="ear" x2=".2" y2="1"><stop stop-color="#ffaeb7"/><stop offset=".55" stop-color="#f57d9e"/><stop offset="1" stop-color="#b9698b"/></linearGradient>
+<linearGradient id="sky" x2=".12" y2="1"><stop stop-color="var(--a)"/><stop offset=".53" stop-color="var(--b)"/><stop offset="1" stop-color="var(--c)"/></linearGradient>
+<radialGradient id="glow"><stop stop-color="#fff9dc" stop-opacity=".7"/><stop offset="1" stop-color="#fff9dc" stop-opacity="0"/></radialGradient>
+<linearGradient id="lip" y2="1"><stop stop-color="#ffccd0"/><stop offset="1" stop-color="#db6c8c"/></linearGradient>
+<filter id="soft"><feGaussianBlur stdDeviation="5"/></filter>
+<filter id="drop" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#26102a" flood-opacity=".42"/></filter>
+</defs><g filter="url(#drop)"><path d="M45 121q46 18 90 0l24 45H23z" fill="#f8c454" stroke="#fff1dc" stroke-width="5"/><path d="M76 129l15 35 16-35M49 151h85" fill="none" stroke="#f7dc8b" stroke-width="6"/><circle cx="90" cy="147" r="4" fill="#fff"/></g></svg>

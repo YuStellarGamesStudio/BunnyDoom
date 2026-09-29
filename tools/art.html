@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Bunny Doom asset export</title>
+<body><h1>Vector asset export</h1><p>Run <code>node tools/generate-art.mjs</code> first. Export each PNG to the indicated repository path, then run the generator again to update favicon.ico.</p><button id="export">Rasterize artwork</button><p id="status" role="status"></p><ul id="files"></ul>
+<script type="module">
+import { rasterizeArt } from './rasterize-art.js';
+const button = document.querySelector('#export');
+button.onclick = async () => {
+  button.disabled = true;
+  document.querySelector('#status').textContent = 'Rasterizing vectors…';
+  try {
+    const output = await rasterizeArt();
+    document.querySelector('#files').replaceChildren();
+    for (const [path, url] of Object.entries(output)) {
+      const link = document.createElement('a'); link.href = url; link.download = path.split('/').at(-1); link.textContent = path;
+      const row = document.createElement('li'); row.append(link); document.querySelector('#files').append(row);
+    }
+    document.querySelector('#status').textContent = 'Ready. Save each file to its displayed path.';
+  } catch (error) { document.querySelector('#status').textContent = error.message; }
+  finally { button.disabled = false; }
+};
+</script></body></html>
