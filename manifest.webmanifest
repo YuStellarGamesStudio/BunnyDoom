@@ -1,0 +1,18 @@
+{
+  "id": "./",
+  "name": "Bunny Doom: Last Pomeranian",
+  "short_name": "Bunny Doom",
+  "description": "The bunnies took over the world. One Pomeranian fights back!",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#20192f",
+  "theme_color": "#20192f",
+  "lang": "en",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
