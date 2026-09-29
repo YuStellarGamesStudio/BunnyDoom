@@ -1,0 +1,10 @@
+{
+  "package": "OPM.js",
+  "version": "1.1.0",
+  "license": "Apache-2.0",
+  "release": "https://github.com/YueyuHoshizora/OPM.js/releases/tag/v1.1.0",
+  "asset": "https://github.com/YueyuHoshizora/OPM.js/releases/download/v1.1.0/opm.js-1.1.0.tgz",
+  "assetSha256": "1344a3c2e6e2904b32cd273854ededca318e9a25e97bca20bfc5d331a3b8121e",
+  "assetDigestSource": "https://api.github.com/repos/YueyuHoshizora/OPM.js/releases/latest",
+  "included": ["dist/", "LICENSE"]
+}
