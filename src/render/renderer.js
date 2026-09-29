@@ -15,7 +15,7 @@ async function atlases() {
       if (!response.ok) throw new Error(`Missing sprite layout: ${response.status}`);
       return response.json();
     }),
-    image('sprites.png'), image('worlds.png'), image('heroes.png'), image('stage.png'),
+    image('sprites.webp'), image('worlds.webp'), image('heroes.webp'), image('stage.webp'),
   ]).then(([layout, sprites, worlds, heroes, stage]) => {
     const indices = Object.fromEntries(layout.sprites.map((name, index) => [name, index]));
     return { layout, sprites, worlds, heroes, stage, indices, tinted: new Map() };
@@ -53,14 +53,32 @@ struct VertexOut {
 @group(0) @binding(0) var art: texture_2d<f32>;
 @group(0) @binding(1) var artSampler: sampler;
 @fragment fn fragment(input: VertexOut) -> @location(0) vec4f {
-  return textureSample(art, artSampler, input.uv) * input.tint;
+  // Atlases are uploaded premultiplied, so filtering and mip averaging never bleed dark fringes.
+  let texel = textureSample(art, artSampler, input.uv);
+  return vec4f(texel.rgb * input.tint.rgb, texel.a) * input.tint.a;
+}`;
+
+const mipShader = `
+@group(0) @binding(0) var source: texture_2d<f32>;
+@group(0) @binding(1) var sourceSampler: sampler;
+struct MipOut {
+  @builtin(position) position: vec4f,
+  @location(0) uv: vec2f,
+};
+@vertex fn vertex(@builtin(vertex_index) index: u32) -> MipOut {
+  let uv = vec2f(f32((index << 1u) & 2u), f32(index & 2u));
+  return MipOut(vec4f(uv * vec2f(2.0, -2.0) + vec2f(-1.0, 1.0), 0.0, 1.0), uv);
+}
+@fragment fn fragment(input: MipOut) -> @location(0) vec4f {
+  return textureSample(source, sourceSampler, input.uv);
 }`;
 
 // Sprite commands are built once per frame, and consumed unchanged by both backends.
 function scene(snapshot, cosmetics, assets, effects, now) {
   const commands = [];
-  const add = (name, x, y, w, h, opacity = 1, tint = [1, 1, 1]) => {
-    if (assets.indices[name] !== undefined) commands.push({ atlas: name === 'dog' || name.startsWith('boss-') ? 2 : 0, name, x, y, w, h, opacity, tint });
+  const add = (name, x, y, w, h, opacity = 1, tint = [1, 1, 1], crop = 1) => {
+    const hero = name === 'dog' || /^boss-[0-5]$/.test(name);
+    if (hero || assets.indices[name] !== undefined) commands.push({ atlas: hero ? 2 : 0, name, x, y, w, h, opacity, tint, crop });
   };
   const world = Math.max(0, Math.min(5, snapshot?.world ?? 0));
   commands.push({ atlas: 1, index: world, x: 0, y: 0, w: 960, h: 540, opacity: 1, tint: [1, 1, 1] });
@@ -70,7 +88,7 @@ function scene(snapshot, cosmetics, assets, effects, now) {
     const hole = holes[row * 3 + col];
     const x = hole?.x ?? 300 + col * 180;
     const y = hole?.y ?? 170 + row * 135;
-    add('hole', x - 83, y - 34, 166, 88);
+    add('hole', x - 90, y - 90, 180, 180);
   }
   const royalHoles = holes.filter(hole => hole?.type === 'boss');
   if (royalHoles.length) {
@@ -100,14 +118,15 @@ function scene(snapshot, cosmetics, assets, effects, now) {
       if (hole.type === 'boss') add('spark', x - 27, y - 64, 54, 54,
         .65 + .3 * Math.sin(now / 160 + col));
       else {
-        const height = 122 * emergence * squash;
+        // Reveal the top of the sprite above the burrow mouth; the rim hides the rest.
+        const size = 126 * squash;
         const name = hole.type === 'decoy' ? 'rabbit-fake' : `rabbit-${hole.type}`;
-        add(name, x - 56, y + 15 - height, 112, height,
-          hole.type === 'decoy' ? .72 : 1);
+        add(name, x - 63, y + 22 - size * emergence, 126, size * emergence,
+          hole.type === 'decoy' ? .72 : 1, undefined, emergence);
       }
       if (hole.warning) add('impact', x - 56, y - 102, 112, 112, .67);
     }
-    if (hole?.type !== 'boss') add('rim', x - 83, y + 5, 166, 65);
+    if (hole?.type !== 'boss') add('rim', x - 90, y - 90, 180, 180);
   }
   for (const pickup of snapshot?.pickups || []) {
     const bounce = Math.sin(now / 185 + pickup.id) * 4;
@@ -166,32 +185,37 @@ function scene(snapshot, cosmetics, assets, effects, now) {
 
 function spriteRect(command, assets) {
   if (command.atlas === 3) return [0, 0, 1920, 1080, 1920, 1080];
-  if (command.atlas === 2) {
-    const index = command.name === 'dog' ? 6 : Number(command.name.slice(5));
-    return [index % 4 * 1024, Math.floor(index / 4) * 1024, 1024, 1024, 4096, 2048];
-  }
   if (command.atlas === 1) {
     const col = command.index % 3;
     const row = (command.index / 3) | 0;
     return [col * 1920, row * 1080, 1920, 1080, 5760, 2160];
   }
+  // Rising sprites show only the top `crop` fraction of their cell.
+  const crop = Math.max(0, Math.min(1, command.crop ?? 1));
+  if (command.atlas === 2) {
+    const index = command.name === 'dog' ? 6 : Number(command.name.slice(5));
+    return [index % 4 * 1024, Math.floor(index / 4) * 1024, 1024, 1024 * crop, 4096, 2048];
+  }
   const index = assets.indices[command.name];
   const [tile] = assets.layout.tile;
-  return [(index % 8) * tile, ((index / 8) | 0) * tile, tile, tile, ...assets.layout.size];
+  return [(index % 8) * tile, ((index / 8) | 0) * tile, tile, tile * crop, ...assets.layout.size];
 }
 
 function drawCPU(renderer, commands) {
   const ctx = renderer.context;
   ctx.setTransform(renderer.canvas.width / 960, 0, 0, renderer.canvas.height / 540, 0, 0);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
   ctx.clearRect(0, 0, 960, 540);
   for (const command of commands) {
     const [sx, sy, sw, sh] = spriteRect(command, renderer.assets);
+    if (sh < 1) continue;
     ctx.globalAlpha = command.opacity;
     const imageSource = command.atlas === 3 ? renderer.assets.stage : command.atlas === 2 ? renderer.assets.heroes : command.atlas === 1 ? renderer.assets.worlds : renderer.assets.sprites;
     if (command.tint[0] === 1 && command.tint[1] === 1 && command.tint[2] === 1) {
       ctx.drawImage(imageSource, sx, sy, sw, sh, command.x, command.y, command.w, command.h);
     } else {
-      const key = `${command.name}:${command.tint.join(',')}`;
+      const key = `${command.name}:${command.tint.join(',')}:${sh}`;
       let tinted = renderer.assets.tinted.get(key);
       if (!tinted) {
         tinted = document.createElement('canvas');
@@ -211,12 +235,30 @@ function drawCPU(renderer, commands) {
   ctx.globalAlpha = 1;
 }
 
-function makeTexture(device, bitmap) {
+function makeTexture(device, bitmap, mipmaps) {
+  const mipLevelCount = Math.floor(Math.log2(Math.max(bitmap.width, bitmap.height))) + 1;
   const texture = device.createTexture({
-    size: [bitmap.width, bitmap.height], format: 'rgba8unorm',
+    size: [bitmap.width, bitmap.height], format: 'rgba8unorm', mipLevelCount,
     usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
   });
-  device.queue.copyExternalImageToTexture({ source: bitmap }, { texture }, [bitmap.width, bitmap.height]);
+  device.queue.copyExternalImageToTexture({ source: bitmap },
+    { texture, premultipliedAlpha: true }, [bitmap.width, bitmap.height]);
+  // Sprites are drawn far below atlas resolution; a mip chain keeps them smooth instead of aliased.
+  const encoder = device.createCommandEncoder();
+  for (let level = 1; level < mipLevelCount; level++) {
+    const group = device.createBindGroup({ layout: mipmaps.pipeline.getBindGroupLayout(0), entries: [
+      { binding: 0, resource: texture.createView({ baseMipLevel: level - 1, mipLevelCount: 1 }) },
+      { binding: 1, resource: mipmaps.sampler },
+    ] });
+    const pass = encoder.beginRenderPass({ colorAttachments: [{
+      view: texture.createView({ baseMipLevel: level, mipLevelCount: 1 }), loadOp: 'clear', storeOp: 'store',
+    }] });
+    pass.setPipeline(mipmaps.pipeline);
+    pass.setBindGroup(0, group);
+    pass.draw(3);
+    pass.end();
+  }
+  device.queue.submit([encoder.finish()]);
   return texture;
 }
 
@@ -238,13 +280,21 @@ async function gpuBackend(renderer) {
         { shaderLocation: 1, offset: 8, format: 'float32x2' },
         { shaderLocation: 2, offset: 16, format: 'float32x4' }] }] },
     fragment: { module, entryPoint: 'fragment', targets: [{ format, blend: {
-      color: { srcFactor: 'src-alpha', dstFactor: 'one-minus-src-alpha', operation: 'add' },
+      color: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha', operation: 'add' },
       alpha: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha', operation: 'add' },
     } }] },
     primitive: { topology: 'triangle-list' },
   });
-  const sampler = device.createSampler({ magFilter: 'linear', minFilter: 'linear' });
-  const textures = [renderer.assets.sprites, renderer.assets.worlds, renderer.assets.heroes, renderer.assets.stage].map(bitmap => makeTexture(device, bitmap));
+  const mipModule = device.createShaderModule({ code: mipShader });
+  const mipmaps = {
+    pipeline: device.createRenderPipeline({ layout: 'auto',
+      vertex: { module: mipModule, entryPoint: 'vertex' },
+      fragment: { module: mipModule, entryPoint: 'fragment', targets: [{ format: 'rgba8unorm' }] },
+      primitive: { topology: 'triangle-list' } }),
+    sampler: device.createSampler({ magFilter: 'linear', minFilter: 'linear' }),
+  };
+  const sampler = device.createSampler({ magFilter: 'linear', minFilter: 'linear', mipmapFilter: 'linear' });
+  const textures = [renderer.assets.sprites, renderer.assets.worlds, renderer.assets.heroes, renderer.assets.stage].map(bitmap => makeTexture(device, bitmap, mipmaps));
   const groups = textures.map(texture => device.createBindGroup({ layout: pipeline.getBindGroupLayout(0),
     entries: [{ binding: 0, resource: texture.createView() }, { binding: 1, resource: sampler }] }));
   const geometry = new Float32Array(8 * 6 * 96);
@@ -357,8 +407,10 @@ export async function createRenderer(canvas, { forceCPU = false, onFallback } = 
       }
     },
   };
-  if (!canvas.width) canvas.width = 960;
-  if (!canvas.height) canvas.height = 540;
+  // Commands stay in 960×540 board units; the backing store follows the display up to 2x.
+  const pixelScale = Math.min(2, Math.max(1, globalThis.devicePixelRatio || 1));
+  canvas.width = Math.round(960 * pixelScale);
+  canvas.height = Math.round(540 * pixelScale);
   if (!forceCPU) {
     try {
       renderer.gpu = await gpuBackend(renderer);

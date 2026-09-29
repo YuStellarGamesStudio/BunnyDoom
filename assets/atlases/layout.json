@@ -1,25 +1,18 @@
 {
   "size": [
     3072,
-    2688
+    2304
   ],
   "tile": [
     384,
     384
   ],
   "sprites": [
-    "dog",
     "rabbit-normal",
     "rabbit-gold",
     "rabbit-silver",
     "rabbit-fake",
     "rabbit-bomb",
-    "boss-0",
-    "boss-1",
-    "boss-2",
-    "boss-3",
-    "boss-4",
-    "boss-5",
     "hole",
     "rim",
     "item-clock",

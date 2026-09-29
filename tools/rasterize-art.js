@@ -12,6 +12,8 @@ async function svgImage(name, width, height) {
 function canvas(width, height) {
   const element = document.createElement('canvas'); element.width = width; element.height = height; return element;
 }
+// Lossy WebP keeps gradients and outlines clean at a fraction of PNG size; alpha stays lossless.
+const atlas = element => element.toDataURL('image/webp', .9);
 export async function rasterizeArt() {
   const layoutResponse = await fetch(new URL('../assets/atlases/layout.json', import.meta.url));
   const layout = await layoutResponse.json();
@@ -21,13 +23,13 @@ export async function rasterizeArt() {
   for (let i = 0; i < layout.sprites.length; i++) {
     context.drawImage(await svgImage(layout.sprites[i], tile, tile), i % 8 * tile, Math.floor(i / 8) * tile, tile, tile);
   }
-  output['assets/atlases/sprites.png'] = sprites.toDataURL('image/png');
+  output['assets/atlases/sprites.webp'] = atlas(sprites);
   const heroes = canvas(4096, 2048), heroContext = heroes.getContext('2d');
   for (let i = 0; i < 7; i++) heroContext.drawImage(await svgImage(i === 6 ? 'dog' : `boss-${i}`, 1024, 1024), i % 4 * 1024, Math.floor(i / 4) * 1024, 1024, 1024);
-  output['assets/atlases/heroes.png'] = heroes.toDataURL('image/png');
+  output['assets/atlases/heroes.webp'] = atlas(heroes);
   const worlds = canvas(5760, 2160), worldContext = worlds.getContext('2d');
   for (let i = 0; i < 6; i++) worldContext.drawImage(await svgImage(`world-${i}`, 1920, 1080), i % 3 * 1920, Math.floor(i / 3) * 1080, 1920, 1080);
-  output['assets/atlases/worlds.png'] = worlds.toDataURL('image/png');
+  output['assets/atlases/worlds.webp'] = atlas(worlds);
   for (const [name, size, maskable] of [['icon-64',64,false],['icon-192',192,false],['icon-512',512,false],['icon-maskable-512',512,true],['apple-touch-icon',180,false]]) {
     const icon = canvas(size,size), ctx = icon.getContext('2d');
     ctx.fillStyle='#45245e';ctx.fillRect(0,0,size,size);
@@ -37,12 +39,13 @@ export async function rasterizeArt() {
   }
   const stage = canvas(1920,1080);
   stage.getContext('2d').drawImage(await svgImage('stage',1920,1080),0,0,1920,1080);
-  output['assets/atlases/stage.png']=stage.toDataURL('image/png');
+  output['assets/atlases/stage.webp']=atlas(stage);
+  // The share image is the English title card, supersampled for smooth edges.
   const large = canvas(2400,1260);large.getContext('2d').drawImage(await svgImage('title',2400,1260),0,0,2400,1260);
-  for (const [i, type] of ['normal', 'gold', 'silver'].entries()) {
-    large.getContext('2d').drawImage(await svgImage(`rabbit-${type}`, 270, 270), 840 + i * 240, 850, 270, 270);
-  }
-  const og = canvas(1200,630);og.getContext('2d').drawImage(large,0,0,1200,630);
-  output['assets/icons/og.png']=og.toDataURL('image/png');
+  const og = canvas(1200,630), ogContext = og.getContext('2d');
+  ogContext.imageSmoothingQuality = 'high';
+  ogContext.drawImage(large,0,0,1200,630);
+  // JPEG keeps the opaque share card small enough for chat-app link previews (≈300 KB limits).
+  output['assets/icons/og.jpg']=og.toDataURL('image/jpeg', .9);
   return output;
 }

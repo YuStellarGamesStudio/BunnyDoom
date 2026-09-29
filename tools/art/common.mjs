@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180"><defs>
+// Shared vector primitives for every generated illustration.
+export const defs = `<defs>
 <radialGradient id="fur" cx="35%" cy="25%" r="75%"><stop stop-color="#fffef1"/><stop offset=".48" stop-color="#ffe6b5"/><stop offset=".86" stop-color="#d99563"/><stop offset="1" stop-color="#965565"/></radialGradient>
 <radialGradient id="white" cx="32%" cy="22%" r="85%"><stop stop-color="#fffdf4"/><stop offset=".65" stop-color="#f3e5d5"/><stop offset="1" stop-color="#cfa9a0"/></radialGradient>
 <radialGradient id="gold" cx="30%" cy="22%"><stop stop-color="#fffccc"/><stop offset=".45" stop-color="#ffe269"/><stop offset="1" stop-color="#d98933"/></radialGradient>
@@ -10,8 +11,7 @@
 <linearGradient id="lip" y2="1"><stop stop-color="#ffccd0"/><stop offset="1" stop-color="#db6c8c"/></linearGradient>
 <filter id="soft"><feGaussianBlur stdDeviation="5"/></filter>
 <filter id="drop" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#26102a" flood-opacity=".42"/></filter>
-</defs><defs><radialGradient id="bd-burst"><stop stop-color="#fffef1"/><stop offset=".34" stop-color="#fff3a9"/><stop offset=".75" stop-color="#ffbd77"/><stop offset="1" stop-color="#ed7390"/></radialGradient>
-<radialGradient id="bd-impact"><stop stop-color="#fff"/><stop offset=".64" stop-color="#fffcea"/><stop offset="1" stop-color="#f2e8dc"/></radialGradient></defs>
-<path d="M90 5 105 56 138 22 126 69 175 57 137 91 174 122 125 112 137 161 104 128 90 177 76 128 42 160 54 112 6 122 44 91 5 57 54 69 42 22 75 56Z" fill="url(#bd-burst)" stroke="#fff9da" stroke-width="3.5" stroke-linejoin="round"/>
-<path d="M90 30 101 68l24-24-10 35 35-9-28 22 29 23-36-8 10 34-24-24-11 37-11-37-24 24 10-34-36 8 29-23-28-22 35 9-10-35 24 24Z" fill="#fff7c5" opacity=".82"/>
-<path d="M90 57L98.5 82.5 124 91 98.5 99.5 90 125 81.5 99.5 56 91 81.5 82.5Z" fill="#fff" stroke="#fff" stroke-width="1.6"/><path d="M36 8L38.25 14.75 45 17 38.25 19.25 36 26 33.75 19.25 27 17 33.75 14.75Z" fill="#fff9d5" stroke="#fff" stroke-width="1.6"/><path d="M154 146L156 152 162 154 156 156 154 162 152 156 146 154 152 152Z" fill="#fff9d5" stroke="#fff" stroke-width="1.6"/><circle cx="156" cy="25" r="4" fill="#fff8d7"/><circle cx="26" cy="150" r="5" fill="#ffdd90"/></svg>
+</defs>`;
+export const svg = (w,h,body,view=`0 0 ${w} ${h}`) => `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="${view}">${defs}${body}</svg>`;
+export const star = (x,y,r,fill='#fff0a8') => `<path d="M${x} ${y-r}L${x+r*.25} ${y-r*.25} ${x+r} ${y} ${x+r*.25} ${y+r*.25} ${x} ${y+r} ${x-r*.25} ${y+r*.25} ${x-r} ${y} ${x-r*.25} ${y-r*.25}Z" fill="${fill}" stroke="#fff" stroke-width="1.6"/>`;
+export const inner = markup => markup.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');

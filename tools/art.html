@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><meta charset="utf-8"><title>Bunny Doom asset export</title>
-<body><h1>Vector asset export</h1><p>Run <code>node tools/generate-art.mjs</code> first. Export each PNG to the indicated repository path, then run the generator again to update favicon.ico.</p><button id="export">Rasterize artwork</button><p id="status" role="status"></p><ul id="files"></ul>
+<body><h1>Vector asset export</h1><p>Run <code>node tools/generate-art.mjs</code> first. Export each file (WebP atlases, PNG icons and OG image) to the indicated repository path, then run the generator again to update favicon.ico.</p><button id="export">Rasterize artwork</button><p id="status" role="status"></p><ul id="files"></ul>
 <script type="module">
 import { rasterizeArt } from './rasterize-art.js';
 const button = document.querySelector('#export');

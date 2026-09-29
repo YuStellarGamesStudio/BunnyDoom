@@ -10,4 +10,14 @@
 <linearGradient id="lip" y2="1"><stop stop-color="#ffccd0"/><stop offset="1" stop-color="#db6c8c"/></linearGradient>
 <filter id="soft"><feGaussianBlur stdDeviation="5"/></filter>
 <filter id="drop" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#26102a" flood-opacity=".42"/></filter>
-</defs><circle cx="90" cy="90" r="76" fill="#fff9dc" opacity=".34"/><path d="M58 62q-28-35-35-4-6 16 13 26-12 16-2 30 11 13 31-4l51-20q20 18 32 6t-4-26q15-16 2-29-15-13-34 5z" fill="#fff6dc" stroke="#b7878b" stroke-width="5"/><path d="M143 21L146 30 155 33 146 36 143 45 140 36 131 33 140 30Z" fill="#fff0a8" stroke="#fff" stroke-width="1.6"/></svg>
+</defs><defs>
+<radialGradient id="bd-badge" cx=".3" cy=".18" r=".88"><stop stop-color="#fffdf1"/><stop offset=".52" stop-color="#ffe8ab"/><stop offset=".83" stop-color="#e8ad89"/><stop offset="1" stop-color="#9e6880"/></radialGradient>
+<linearGradient id="bd-blue" x1=".18" y1=".1" x2=".83" y2="1"><stop stop-color="#f2ffff"/><stop offset=".45" stop-color="#8be2ee"/><stop offset="1" stop-color="#397dba"/></linearGradient>
+<linearGradient id="bd-red" x1=".1" y1="0" x2=".8" y2="1"><stop stop-color="#ffabb0"/><stop offset=".42" stop-color="#f46478"/><stop offset="1" stop-color="#a6346d"/></linearGradient>
+<linearGradient id="bd-bone" x1=".2" y1="0" x2=".8" y2="1"><stop stop-color="#fffefa"/><stop offset=".5" stop-color="#fff4d2"/><stop offset="1" stop-color="#d9a699"/></linearGradient>
+</defs>
+<circle cx="90" cy="94" r="75" fill="#2d233b" opacity=".24" filter="url(#soft)"/>
+<circle cx="90" cy="88" r="72" fill="url(#bd-badge)" stroke="#6e4a5e" stroke-width="4"/>
+<circle cx="90" cy="88" r="63" fill="none" stroke="#fff8d7" stroke-width="3" opacity=".8"/>
+<path d="M34 62q15-29 53-32" fill="none" stroke="#fff" stroke-width="4" opacity=".75" stroke-linecap="round"/>
+<g transform="rotate(-28 90 90)"><path d="M49 65c-13-12-28-5-27 9 0 8 6 14 14 16-9 8-7 19 2 24 10 6 19 0 25-8h53c6 8 16 14 26 8 9-5 11-16 2-24 8-2 14-8 14-16 1-14-14-21-27-9-3 3-5 8-7 12H56c-2-4-4-9-7-12Z" fill="url(#bd-bone)" stroke="#6e4a5e" stroke-width="5" stroke-linejoin="round"/><path d="M57 82h64M45 74q-9-8-15 2m110-2q9-8 15 2" fill="none" stroke="#fff" stroke-width="4" opacity=".85" stroke-linecap="round"/><path d="M58 99h64" stroke="#b7878b" opacity=".5" stroke-width="2" stroke-linecap="round"/></g><path d="M133 42l3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#fffef2" opacity=".9"/></svg>

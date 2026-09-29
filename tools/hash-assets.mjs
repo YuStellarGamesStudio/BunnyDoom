@@ -13,7 +13,7 @@ async function walk(dir) {
   return files.flat();
 }
 const runtime = ['app.js', ...await walk('src'), ...await walk('assets')].filter((path) => !/\.(?:md|tgz|map)$/.test(path));
-const shell = ['index.html', 'manifest.webmanifest', 'favicon.ico', 'CNAME', 'LICENSE'];
+const shell = ['index.html', 'manifest.webmanifest', 'favicon.ico', 'CNAME', 'LICENSE', '.nojekyll'];
 const inputs = [...new Set([...runtime, ...shell, 'sw.js', 'tools/hash-assets.mjs'])].sort();
 const buffers = new Map(await Promise.all(inputs.map(async (path) => [path, await readFile(resolve(root, path))])));
 const hash = createHash('sha256');
@@ -29,7 +29,6 @@ let html = buffers.get('index.html').toString();
 html = html.replace(/\b(src|href)=(['"])(\.\/)?(app\.js|assets\/[^'"?#]+)(\?[^'"#]*)?\2/g, (match, attr, quote, dot, path) => `${attr}=${quote}${release}/${path}${quote}`);
 html = html.replace('</head>', `<meta name="bunnydoom-version" content="${version}">\n</head>`);
 generated.set('index.html', Buffer.from(html));
-generated.set('.nojekyll', Buffer.from(''));
 const precache = [...generated.keys()].filter((path) => !['CNAME', 'LICENSE', '.nojekyll'].includes(path)).sort();
 const sw = buffers.get('sw.js').toString()
   .replace("const VERSION = '__BUNNY_VERSION__';", `const VERSION = 'bunnydoom-${version}';`)

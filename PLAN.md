@@ -8,7 +8,7 @@
 - 實際倉庫：<https://github.com/YuStellarGamesStudio/BunnyDoom>。
 - 遊戲、資產、測試與部署工作流程依功能分組提交於本機；尚未推送遊戲提交或觸發正式部署。
 - 正式目標：<https://bunnydoom.ysgs.app/>。CNAME 已推送不代表 Pages、DNS 或 HTTPS 已上線；本輪未修改 DNS／Pages 設定。
-- 最後驗證的 production build：`bcd338389b1c7b1cd502`，117 個 precache 資源。
+- 最後驗證的 production build：`0cb799bb0d85e8c37333`，117 個 precache 資源。
 
 ## 1. 執行方式
 
@@ -74,15 +74,17 @@ PORT=4174 npm run preview
 | `src/audio/audio.js`、`src/data/audio.js` | OPM 排程、聲部與佇列管理、樂器、音效 |
 | `assets/audios/` | 12 首 BGM JSON |
 | `src/vendor/opm/` | 官方 release 的 API、worklet、chunks、Apache-2.0 授權與來源／checksum 紀錄 |
-| `assets/art/`、`assets/atlases/` | SVG 原稿、384px sprite tiles、1024px 主角／BOSS tiles、2x 世界背景與舞台 |
-| `assets/icons/`、`favicon.ico` | 安裝圖示、Apple touch、固定英文 1200×630 OG 圖 |
-| `tools/generate-art.mjs`、`tools/rasterize-art.js`、`tools/art.html` | 向量資產生成與瀏覽器光柵輸出工具 |
+| `assets/art/`、`assets/atlases/` | SVG 原稿；WebP 圖集：384px sprite tiles、1024px 博美／兔王 tiles、2x 世界背景與舞台 |
+| `assets/icons/`、`favicon.ico` | 安裝圖示、Apple touch、固定英文 1200×630 分享圖 `og.jpg` |
+| `tools/generate-art.mjs`、`tools/art/`、`tools/rasterize-art.js`、`tools/art.html` | 向量資產生成（共用、世界、棋盤／特效、角色／造型模組）與瀏覽器光柵輸出工具 |
 | `tools/hash-assets.mjs`、`sw.js`、`src/pwa.js` | 內容雜湊 release、完整 precache、保守升級 |
 | `tests/` | Node 內建測試工具的核心與存檔回歸測試 |
 
-玩法使用同一個 `Game`，WebGPU 模式在主執行緒模擬，CPU 模式在 Worker 模擬。GPU 失效時先序列化戰局，再以 Canvas／Worker 接續，不重新開局。兩條路徑共用 PNG 圖集，不以整張 Canvas 上傳冒充 WebGPU 繪製。
+玩法使用同一個 `Game`，WebGPU 模式在主執行緒模擬，CPU 模式在 Worker 模擬。GPU 失效時先序列化戰局，再以 Canvas／Worker 接續，不重新開局。兩條路徑共用 WebP 圖集，不以整張 Canvas 上傳冒充 WebGPU 繪製。
 
-美術重新輸出：先執行 `node tools/generate-art.mjs`，開啟開發站的 `/tools/art.html`，將產生的 PNG 按頁面路徑存回專案；若圖示改變，再執行一次生成器更新 ICO。最後重新 build。已交付完整生成資產，正常啟動與打包不需要重做美術輸出。
+美術重新輸出：先執行 `node tools/generate-art.mjs`，開啟開發站的 `/tools/art.html`，將產生的 WebP 圖集、PNG 圖示與 `og.jpg` 按頁面路徑存回專案；若圖示改變，再執行一次生成器更新 ICO。最後重新 build。已交付完整生成資產，正常啟動與打包不需要重做美術輸出。
+
+圖集與渲染約定：`hole`／`rim` 為 180×180、以洞口中心 1:1 繪製，`rim` 只含前緣並蓋在兔子前方；兔子以 126px 方格由上往下裁切冒出，不再垂直壓扁。圖集以 WebP（q=0.9）輸出，WebGPU 上傳為 premultiplied alpha 並建立完整 mipmap，Canvas 回退使用高品質平滑；遊戲 Canvas 後備緩衝依 devicePixelRatio 最高 2x。博美與兔王只存在 1024px hero 圖集。分享圖直接由英文標題插畫光柵化，OG／Twitter 標記含尺寸、型別與替代文字。
 
 ## 5. 存檔、安全與版本更新
 
@@ -103,7 +105,8 @@ PORT=4174 npm run preview
 | 驗證 | 實際結果 |
 | --- | --- |
 | `npm test` | 22 項全部通過，0 失敗；包含核心與存檔／經濟邊界 |
-| `npm run build`、`npm run assets:check` | 最終 build `bcd338389b1c7b1cd502`；117 個離線資源，內容 hash 檢查通過 |
+| `npm run build`、`npm run assets:check` | 最終 build `0cb799bb0d85e8c37333`；117 個離線資源，內容 hash 檢查通過；圖集由 7.9 MB PNG 降為 1.6 MB WebP |
+| 美術重繪實機檢視 | Chromium 中 WebGPU 與強制 Canvas 路徑皆實際繪製新圖集：洞口比例正確、兔子裁切冒出、BOSS 與血條正常；production 預覽確認 OG／Twitter 標記與 `og.jpg`、`.nojekyll` 輸出 |
 | 真實引擎的 60 關固定種子模擬 | 60/60 通關，包含全部六兔王；無技能輸入。首關 19 次命中、2 星、10.3167 秒；最終 BOSS 221.77 秒，跨過狂暴門檻 |
 | 同一模擬的存檔經濟 | 累計 164 SP，全部 24 件造型可解鎖；購買 15 技能花 27 SP，剩 137，schema 驗證通過 |
 | 真實 Chromium 點擊普通關 | 強制 CPU Worker、手機版，20 次命中、5543 分、2 星、漏兔 0，下一關與 2 SP 寫入存檔；也走過失敗與重試 |
@@ -134,4 +137,4 @@ PORT=4174 npm run preview
 3. 手動執行 **Deploy Bunny Doom**；流程會測試、build、檢查 hash，再上傳並發布 `dist/`。
 4. 由網域管理者確認 `bunnydoom.ysgs.app` 的 DNS 與 Pages HTTPS，再驗證正式網址和 OG 圖。
 
-發布產物保留根目錄 CNAME、LICENSE、manifest、圖示與 `.nojekyll`；不需要把 `dist/` 提交回原始碼分支。
+發布產物保留根目錄 CNAME、LICENSE、manifest、圖示與 `.nojekyll`（原始碼根目錄的 `.nojekyll` 由 build 複製）；不需要把 `dist/` 提交回原始碼分支。

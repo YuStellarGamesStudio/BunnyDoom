@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180"><defs>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><defs>
 <radialGradient id="fur" cx="35%" cy="25%" r="75%"><stop stop-color="#fffef1"/><stop offset=".48" stop-color="#ffe6b5"/><stop offset=".86" stop-color="#d99563"/><stop offset="1" stop-color="#965565"/></radialGradient>
 <radialGradient id="white" cx="32%" cy="22%" r="85%"><stop stop-color="#fffdf4"/><stop offset=".65" stop-color="#f3e5d5"/><stop offset="1" stop-color="#cfa9a0"/></radialGradient>
 <radialGradient id="gold" cx="30%" cy="22%"><stop stop-color="#fffccc"/><stop offset=".45" stop-color="#ffe269"/><stop offset="1" stop-color="#d98933"/></radialGradient>
@@ -10,4 +10,15 @@
 <linearGradient id="lip" y2="1"><stop stop-color="#ffccd0"/><stop offset="1" stop-color="#db6c8c"/></linearGradient>
 <filter id="soft"><feGaussianBlur stdDeviation="5"/></filter>
 <filter id="drop" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#26102a" flood-opacity=".42"/></filter>
-</defs><circle cx="90" cy="90" r="70" fill="#fff4d6" stroke="#df6d91" stroke-width="8" opacity=".92"/><text x="90" y="123" text-anchor="middle" font-size="111" font-family="Arial Rounded MT Bold,Arial,sans-serif" font-weight="1000" fill="#59335e" stroke="#fff" stroke-width="5" paint-order="stroke">2</text><path d="M146 17L149 26 158 29 149 32 146 41 143 32 134 29 143 26Z" fill="#fff0a8" stroke="#fff" stroke-width="1.6"/></svg>
+</defs><defs>
+<linearGradient id="bd-count-ring" x1=".15" y1="0" x2=".8" y2="1"><stop stop-color="#fff7bc"/><stop offset=".33" stop-color="#ffd078"/><stop offset=".7" stop-color="#ef8c8a"/><stop offset="1" stop-color="#a85783"/></linearGradient>
+<radialGradient id="bd-count-face" cx=".3" cy=".17" r=".9"><stop stop-color="#fffdf4"/><stop offset=".48" stop-color="#ffe9c6"/><stop offset="1" stop-color="#dfadba"/></radialGradient>
+<linearGradient id="bd-count-text" x1="0" y1="0" x2=".3" y2="1"><stop stop-color="#a24b79"/><stop offset="1" stop-color="#562f63"/></linearGradient>
+</defs>
+<circle cx="100" cy="108" r="83" fill="#2a203c" opacity=".42" filter="url(#soft)"/>
+<circle cx="100" cy="99" r="82" fill="url(#bd-count-ring)" stroke="#5a3a55" stroke-width="5"/>
+<circle cx="100" cy="99" r="68" fill="url(#bd-count-face)" stroke="#fff4ca" stroke-width="3"/>
+<path d="M31 80q19-50 76-54" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".8"/>
+<path d="M58 148q42 29 84 0" fill="none" stroke="#a96482" stroke-width="3" opacity=".45" stroke-linecap="round"/>
+<text x="100" y="139" text-anchor="middle" font-size="110" letter-spacing="0" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-weight="900" fill="url(#bd-count-text)" stroke="#fff9e8" stroke-width="7" stroke-linejoin="round" paint-order="stroke">2</text>
+<path d="M159 24L162 33 171 36 162 39 159 48 156 39 147 36 156 33Z" fill="#fff8d7" stroke="#fff" stroke-width="1.6"/><circle cx="38" cy="140" r="4" fill="#fff9da"/></svg>
