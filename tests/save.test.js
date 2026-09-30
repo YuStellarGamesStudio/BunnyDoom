@@ -106,9 +106,9 @@ test('storage write failure is visible to callers', () => {
   assert.throws(() => writeSave(createSave()), /unavailable/);
 });
 
-test('language respects valid URL then save then browser then English', () => {
-  assert.equal(resolveLanguage('?lang=zh', 'ja', 'en-US'), 'zh');
-  assert.equal(resolveLanguage('?lang=unknown', 'ja', 'zh-TW'), 'ja');
-  assert.equal(resolveLanguage('', null, 'zh-Hant'), 'zh');
-  assert.equal(resolveLanguage('', null, 'fr-FR'), 'en');
+test('language respects valid URL then saved preference, otherwise defaults to English', () => {
+  assert.equal(resolveLanguage('?lang=zh', 'ja'), 'zh');
+  assert.equal(resolveLanguage('?lang=unknown', 'ja'), 'ja');
+  assert.equal(resolveLanguage('', null), 'en');
+  assert.equal(resolveLanguage('?lang=unknown', 'unknown'), 'en');
 });

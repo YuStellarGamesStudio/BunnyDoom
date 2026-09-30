@@ -15,7 +15,7 @@ const artURL = (name) => new URL(`./assets/art/${name}`,import.meta.url).href;
 const stored = loadSave();
 let save = stored.save;
 let saveError = stored.error;
-let lang = resolveLanguage(location.search,save.settings.lang,navigator.language);
+let lang = resolveLanguage(location.search,save.settings.lang);
 let screen = 'title', modal = null, settingTab = 'audio';
 let selectedLevel = Math.max(1,Math.min(60,save.unlocked));
 let selectedWorld = Math.floor((selectedLevel-1)/10), branch = 'A', skillPage = 0, filter = 'all', collectionPage = 0;
@@ -60,9 +60,9 @@ function updateLang(next,historyMode='push'){
 }
 window.addEventListener('popstate',()=>{
   const next=new URLSearchParams(location.search).get('lang');
-  updateLang(LANGUAGES[next]?next:resolveLanguage('',save.settings.lang,navigator.language),'none');
+  updateLang(LANGUAGES[next]?next:resolveLanguage('',save.settings.lang),'none');
 });
-function header(){return `<header class="topbar"><div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><span>BUNNY DOOM</span></div><div class="top-actions"><span class="pill gold" title="${tr('totalStars')}">★ ${Object.values(save.levels).reduce((sum,entry)=>sum+entry.stars,0)}</span>${screen==='title'?'':button(screen==='game'?'quit':'map',tr('map'),'ghost tiny')}${button('settings',tr('settings'),'ghost tiny')}</div></header>`;}
+function header(){return `<header class="topbar"><div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><span>BUNNY DOOM</span></div><div class="top-actions"><span class="pill gold" title="${tr('totalStars')}">★ ${Object.values(save.levels).reduce((sum,entry)=>sum+entry.stars,0)}</span>${screen==='title'?'':button(screen==='game'?'quit':'map',tr('map'),'ghost tiny')}${button('language',tr('language'),'ghost tiny')}${button('settings',tr('settings'),'ghost tiny')}</div></header>`;}
 function render(){
   if(screen==='game'){renderGameLabels();return;}
   root.innerHTML=`<div class="app-shell">${header()}<main class="screen">${({title:renderTitle,map:renderMap,loadout:renderLoadout,result:renderResult,skills:renderSkills,collection:renderCollection})[screen]?.()||''}</main></div>`;
@@ -126,7 +126,7 @@ function drawLoadoutPortrait(){const canvas=document.querySelector('#loadoutPort
 function openModal(type){
   if(type==='scores')scorePage=0;
   if(type==='settings'){settingTab='audio';importDraft='';importCandidate=null;}
-  if(screen==='game' && !pausedByUser && type==='settings')togglePause(true);
+  if(screen==='game' && !pausedByUser && (type==='settings'||type==='language'))togglePause(true);
   modal=type;renderModal();
 }
 function closeModal(){modal=null;document.querySelector('.modal-backdrop')?.remove();}
@@ -151,10 +151,9 @@ function renderModal(){
   if(modal==='settings' && settingTab==='import')document.querySelector('#importText').value=importDraft;
 }
 function renderSettings(){
-  const tabs=`<div class="tabs">${[['audio','audio'],['language','language'],['data','data'],['import','importData']].map(([id,label])=>button('settings-tab',tr(label),settingTab===id?'active':'',`data-id="${id}"`)).join('')}</div>`;
+  const tabs=`<div class="tabs">${[['audio','audio'],['data','data'],['import','importData']].map(([id,label])=>button('settings-tab',tr(label),settingTab===id?'active':'',`data-id="${id}"`)).join('')}</div>`;
   let content='';
   if(settingTab==='audio')content=`<div class="setting-row"><label for="musicSwitch">${tr('music')}</label><input id="musicSwitch" data-setting="bgm" type="checkbox" ${save.settings.bgm?'checked':''} aria-label="${tr('music')}"></div><div class="setting-row"><label for="musicVolume">${tr('music')} · <span id="musicValue">${save.settings.bgmVolume}</span>%</label><input id="musicVolume" data-setting="bgmVolume" type="range" min="0" max="100" value="${save.settings.bgmVolume}"></div><div class="setting-row"><label for="sfxSwitch">${tr('sounds')}</label><input id="sfxSwitch" data-setting="sfx" type="checkbox" ${save.settings.sfx?'checked':''} aria-label="${tr('sounds')}"></div><div class="setting-row"><label for="sfxVolume">${tr('sounds')} · <span id="sfxValue">${save.settings.sfxVolume}</span>%</label><input id="sfxVolume" data-setting="sfxVolume" type="range" min="0" max="100" value="${save.settings.sfxVolume}"></div>`;
-  else if(settingTab==='language')content=`<div class="setting-row"><label>${tr('language')}</label><div class="tabs">${Object.entries(LANGUAGES).map(([id,text])=>button('set-language',text,id===lang?'active':'',`data-id="${id}"`)).join('')}</div></div>`;
   else if(settingTab==='data')content=`${saveError?`<p class="danger">${tr('saveError')}</p>`:''}<div class="preview-summary"><div class="stat"><strong>${save.unlocked}/60</strong>${tr('progress')}</div><div class="stat"><strong>${Object.values(save.levels).reduce((sum,entry)=>sum+entry.stars,0)}</strong>${tr('totalStars')}</div></div><div class="button-row">${button('export-json',tr('exportJson'),'gold')}${button('export-code',tr('exportCode'),'gold')}</div><textarea id="exportText" class="save-text" readonly aria-label="${tr('exportCode')}"></textarea>${saveError?button('new-save',tr('newSave'),'ghost'):''}<p class="small">${tr('importWarning')}</p>`;
   else if(settingTab==='import')content=`<label for="importText">${tr('pasteCode')}</label><textarea id="importText" class="save-text" placeholder="${tr('pasteCode')}"></textarea><div class="button-row"><label class="btn" for="importFile">${tr('chooseFile')}</label><input id="importFile" type="file" accept=".json,application/json,text/plain" hidden>${button('import-preview',tr('preview'),'gold')}</div>${importCandidate?`<div class="preview-summary"><div class="stat"><strong>${importCandidate.unlocked}/60</strong>${tr('progress')}</div><div class="stat"><strong>${Object.values(importCandidate.levels).reduce((sum,entry)=>sum+entry.stars,0)}</strong>${tr('totalStars')}</div><div class="stat"><strong>${importCandidate.totalSP}</strong>${tr('spent')}</div><div class="stat"><strong>${escapeHTML(new Date(importCandidate.updatedAt).toLocaleDateString(lang))}</strong>${tr('savedAt')}</div></div><p class="small">${tr('importWarning')}</p>${button('import-confirm',tr('importConfirm'),'primary')}`:''}`;
   return modalShell(tr('settings'),tabs+content,button('close-modal',tr('close'),'ghost'));

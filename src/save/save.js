@@ -217,10 +217,9 @@ export function addHighScore(save, { name, score, level }) {
   return next;
 }
 
-export function resolveLanguage(search, savedLang, browserLang) {
+export function resolveLanguage(search, savedLang) {
   const requested = new URLSearchParams(search).get('lang');
   if (languages.includes(requested)) return requested;
   if (languages.includes(savedLang)) return savedLang;
-  const detected = String(browserLang ?? '').toLowerCase().split('-')[0];
-  return languages.includes(detected) ? detected : 'en';
+  return 'en';
 }
