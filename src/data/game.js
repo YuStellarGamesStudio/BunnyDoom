@@ -14,8 +14,8 @@ export const CONFIG = Object.freeze({
   pickupRadius: 40,
   spawnInterval: 0.57,
   firstSpawn: 0.35,
-  targetBase: 3000,
-  targetGrowth: 1.08,
+  targetBase: 10000,
+  targetGrowth: 1.04,
   normalEquipmentSlots: 2,
   extraEquipmentSlots: 1,
   goldGuarantee: Object.freeze([3, 11, 19, 27]),
@@ -79,12 +79,12 @@ export const CONFIG = Object.freeze({
 });
 
 export const WORLDS = Object.freeze([
-  { id: 0, name: text('Tokyo Neon', '東京霓虹', 'ネオン東京'), bossName: text('Ramen King', '拉麵兔王', 'ラーメン王'), color: '#ef58bc', stay: 1.6, limit: 2, specialRate: 0.08, hazardRate: 0.05, factor: 1, duration: 60, hp: 100 },
-  { id: 1, name: text('Paris Twilight', '巴黎黃昏', '夕暮れのパリ'), bossName: text('Croissant King', '可頌兔王', 'クロワッサン王'), color: '#efaa65', stay: 1.45, limit: 3, specialRate: 0.08, hazardRate: 0.08, factor: 1.4, duration: 60, hp: 140 },
-  { id: 2, name: text('New York Daylight', '紐約白晝', '昼下がりのニューヨーク'), bossName: text('Liberty King', '自由兔王', '自由の王'), color: '#56b8dc', stay: 1.3, limit: 3, specialRate: 0.09, hazardRate: 0.1, factor: 1.9, duration: 75, hp: 180 },
-  { id: 3, name: text('Cairo Sands', '開羅沙金', 'カイロの砂金'), bossName: text('Pharaoh King', '法老兔王', 'ファラオ王'), color: '#e6b954', stay: 1.15, limit: 4, specialRate: 0.09, hazardRate: 0.12, factor: 2.5, duration: 75, hp: 220 },
-  { id: 4, name: text('Antarctic Ice', '南極冰原', '南極の氷原'), bossName: text('Penguin King', '企鵝兔王', 'ペンギン王'), color: '#86d9eb', stay: 1.05, limit: 4, specialRate: 0.1, hazardRate: 0.15, factor: 3.2, duration: 90, hp: 260 },
-  { id: 5, name: text('Lunar Frontier', '月球邊疆', '月の辺境'), bossName: text('Moon King', '月球兔王', '月面王'), color: '#ab9aed', stay: 0.95, limit: 5, specialRate: 0.1, hazardRate: 0.18, factor: 4, duration: 90, hp: 320 },
+  { id: 0, name: text('Tokyo Neon', '東京霓虹', 'ネオン東京'), bossName: text('Ramen King', '拉麵兔王', 'ラーメン王'), color: '#ef58bc', stay: 1.6, limit: 2, specialRate: 0.08, hazardRate: 0.05, factor: 1, duration: 75, hp: 60 },
+  { id: 1, name: text('Paris Twilight', '巴黎黃昏', '夕暮れのパリ'), bossName: text('Croissant King', '可頌兔王', 'クロワッサン王'), color: '#efaa65', stay: 1.45, limit: 3, specialRate: 0.08, hazardRate: 0.08, factor: 1.25, duration: 75, hp: 85 },
+  { id: 2, name: text('New York Daylight', '紐約白晝', '昼下がりのニューヨーク'), bossName: text('Liberty King', '自由兔王', '自由の王'), color: '#56b8dc', stay: 1.3, limit: 3, specialRate: 0.09, hazardRate: 0.1, factor: 1.5, duration: 75, hp: 110 },
+  { id: 3, name: text('Cairo Sands', '開羅沙金', 'カイロの砂金'), bossName: text('Pharaoh King', '法老兔王', 'ファラオ王'), color: '#e6b954', stay: 1.15, limit: 4, specialRate: 0.09, hazardRate: 0.12, factor: 1.8, duration: 75, hp: 135 },
+  { id: 4, name: text('Antarctic Ice', '南極冰原', '南極の氷原'), bossName: text('Penguin King', '企鵝兔王', 'ペンギン王'), color: '#86d9eb', stay: 1.05, limit: 4, specialRate: 0.1, hazardRate: 0.15, factor: 2.1, duration: 90, hp: 160 },
+  { id: 5, name: text('Lunar Frontier', '月球邊疆', '月の辺境'), bossName: text('Moon King', '月球兔王', '月面王'), color: '#ab9aed', stay: 0.95, limit: 5, specialRate: 0.1, hazardRate: 0.18, factor: 2.4, duration: 90, hp: 185 },
 ]);
 
 export const STORY = Object.freeze([
