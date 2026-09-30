@@ -94,6 +94,7 @@ PORT=4174 npm run preview
 - 匯入先預覽進度、星數與日期，確認後先成功備份舊檔，才替換新檔。匯入寫入失敗不替換目前的記憶體存檔；損毀舊檔不自動覆寫。
 - 戰鬥中設定只改記憶體，不立即寫存檔；結束或離開戰局時儲存。局內不開放存檔匯入。
 - `dist/releases/<content-hash>/` 保留完整相對路徑圖，涵蓋 app、Worker、OPM worklet／chunks、JSON 與全部美術，不依賴 Window import map。
+- Build 為 HTML 的 app.js、CSS、圖示與 manifest 引用附加 `?={檔案內容 SHA-256 前 20 碼}`，離線 precache 同時收錄帶 hash 與原始 URL。模組內的相對引用仍由不可變 release 目錄版本隔離。
 - 完整 precache 成功才安裝新版；不呼叫 `skipWaiting` 強迫接管進行中的戰局。關閉使用中的遊戲分頁後安全啟用，再保留一版舊快取。
 - 只清理本遊戲快取前綴，不清 localStorage；精確匹配資產 URL。帶 `?lang=` 的離線導航回退入口文件，由介面解析語系。
 - 無 CDN、錄音檔或執行時第三方服務依賴。專案 AGPL-3.0-only，OPM.js 保留原 Apache-2.0 授權。

@@ -26,10 +26,16 @@ for (const path of shell.filter((path) => path !== 'index.html')) generated.set(
 for (const path of runtime.filter((path) => path.startsWith('assets/icons/'))) generated.set(path, buffers.get(path));
 let html = buffers.get('index.html').toString();
 // Only HTML resource URLs are rewritten; all ES modules/worklets/workers keep relative imports in an immutable release tree.
-html = html.replace(/\b(src|href)=(['"])(\.\/)?(app\.js|assets\/[^'"?#]+)(\?[^'"#]*)?\2/g, (match, attr, quote, dot, path) => `${attr}=${quote}${release}/${path}${quote}`);
+const resourceHashes = new Map();
+html = html.replace(/\b(src|href)=(['"])(\.\/)?(app\.js|assets\/[^'"?#]+|manifest\.webmanifest|favicon\.ico)(\?[^'"#]*)?\2/g, (match, attr, quote, dot, path) => {
+  const target = runtime.includes(path) ? `${release}/${path}` : path;
+  const digest = createHash('sha256').update(buffers.get(path)).digest('hex').slice(0, 20);
+  resourceHashes.set(target, `${target}?=${digest}`);
+  return `${attr}=${quote}${target}?=${digest}${quote}`;
+});
 html = html.replace('</head>', `<meta name="bunnydoom-version" content="${version}">\n</head>`);
 generated.set('index.html', Buffer.from(html));
-const precache = [...generated.keys()].filter((path) => !['CNAME', 'LICENSE', '.nojekyll'].includes(path)).sort();
+const precache = [...generated.keys()].filter((path) => !['CNAME', 'LICENSE', '.nojekyll'].includes(path)).flatMap((path) => resourceHashes.has(path) ? [path, resourceHashes.get(path)] : [path]).sort();
 const sw = buffers.get('sw.js').toString()
   .replace("const VERSION = '__BUNNY_VERSION__';", `const VERSION = 'bunnydoom-${version}';`)
   .replace('/* BUNNY_PRECACHE */ []', JSON.stringify(precache));
