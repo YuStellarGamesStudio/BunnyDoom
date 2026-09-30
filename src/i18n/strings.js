@@ -12,9 +12,9 @@ const messages = {
   }
 };
 const extra = {
-  en:{newSave:'START NEW SAVE',confirmNewSave:'Replace unreadable saved data with a new game? This cannot be undone.',removeThird:'Remove one gear item before resetting to two slots.'},
-  zh:{newSave:'建立新存檔',confirmNewSave:'用新遊戲取代無法讀取的存檔？此操作無法復原。',removeThird:'請先卸下一件裝備，再重置回兩個裝備欄位。'},
-  ja:{newSave:'新しいセーブを作成',confirmNewSave:'読み込めないデータを新しいセーブで上書きしますか？元に戻せません。',removeThird:'装備枠を2つに戻す前に、装備を1つ外してください。'}
+  en:{downloadResult:'DOWNLOAD RESULT CARD',cardError:'Could not create the card. Please try again.',newSave:'START NEW SAVE',confirmNewSave:'Replace unreadable saved data with a new game? This cannot be undone.',removeThird:'Remove one gear item before resetting to two slots.'},
+  zh:{downloadResult:'下載戰績卡',cardError:'無法製作卡片，請再試一次。',newSave:'建立新存檔',confirmNewSave:'用新遊戲取代無法讀取的存檔？此操作無法復原。',removeThird:'請先卸下一件裝備，再重置回兩個裝備欄位。'},
+  ja:{downloadResult:'リザルトカードを保存',cardError:'カードを作成できませんでした。もう一度お試しください。',newSave:'新しいセーブを作成',confirmNewSave:'読み込めないデータを新しいセーブで上書きしますか？元に戻せません。',removeThird:'装備枠を2つに戻す前に、装備を1つ外してください。'}
 };
 export function t(lang,key){return messages[lang]?.[key]??extra[lang]?.[key]??messages.en[key]??extra.en[key]??key;}
 export function localized(value,lang){return typeof value==='string'?value:value?.[lang]??value?.en??'';}

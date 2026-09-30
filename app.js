@@ -6,6 +6,7 @@ import {AudioManager} from './src/audio/audio.js';
 import {createSave, loadSave, writeSave, exportSave, encodeSave, parseSave, importSave, applyResult, buySkill, resetSkills, availableCosmetics, setCosmetic, addHighScore, resolveLanguage} from './src/save/save.js';
 import {registerPWA} from './src/pwa.js';
 import {t, localized, LANGUAGES} from './src/i18n/strings.js';
+import {createResultCard} from './src/render/result-card.js';
 
 const root = document.querySelector('#app');
 const toastNode = document.querySelector('#toast');
@@ -66,6 +67,7 @@ function header(){return `<header class="topbar"><div class="brand"><span class=
 function render(){
   if(screen==='game'){renderGameLabels();return;}
   root.innerHTML=`<div class="app-shell">${header()}<main class="screen">${({title:renderTitle,map:renderMap,loadout:renderLoadout,result:renderResult,skills:renderSkills,collection:renderCollection})[screen]?.()||''}</main></div>`;
+  if(screen==='result')document.querySelector('.result-actions').insertAdjacentHTML('beforeend',button('export-result',tr('downloadResult'),'gold'));
   if(modal)renderModal();
   if(screen==='collection')refreshPortrait();
   if(screen==='loadout')drawLoadoutPortrait();
@@ -334,6 +336,14 @@ async function exportPortrait(){
 }
 function takeAction(action,id){
   switch(action){
+    case 'export-result': {
+      if(!lastResult)return;
+      const result={...lastResult}, cardLang=lang, cosmetics={...save.equipped};
+      createResultCard(result,cosmetics,cardLang)
+        .then(blob=>downloadBlob(blob,`bunnydoom-${result.won?'victory':'defeat'}-${result.level}-${cardLang}.png`))
+        .catch(()=>notify(t(cardLang,'cardError')));
+      break;
+    }
     case 'start':go('map');break;
     case 'map':go('map');break;
     case 'guide':case 'scores':case 'language':openModal(action);break;
